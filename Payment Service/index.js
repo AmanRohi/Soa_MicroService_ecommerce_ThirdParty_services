@@ -17,7 +17,7 @@ app.use(
     })
   )
 
-const User = require("./User");
+const User = require("./modal/User");
 const Payment = require('./modal/Payment');
 // unique id of user , text , rating 
 app.post("/payment", async (req, res) => {
@@ -68,7 +68,7 @@ app.post("/payment", async (req, res) => {
 
 
 
-app.set("port", process.env.port || 3002)
+app.set("port", process.env.port || 3003)
 app.listen(app.get("port"), async() => {
   try{     
     console.log(`Server Started on http://localhost:${app.get("port")}`)

@@ -17,8 +17,8 @@ app.use(
     })
   )
 
-const Feedback = require("./Feedback");
-const User = require("./User");
+const Feedback = require("./modal/Feedback");
+const User = require("./modal/User");
 // unique id of user , text , rating 
 app.post("/feedback", async (req, res) => {
     try {

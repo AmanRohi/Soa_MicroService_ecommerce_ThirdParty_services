@@ -17,8 +17,8 @@ app.use(
     })
   )
 
-const Notification = require("./Notification");
-const User = require("./User");
+const Notification = require("./modal/Notification");
+const User = require("./modal/User");
 // unique id of user , text , rating 
 app.post("/notification", async (req, res) => {
     try {
@@ -29,9 +29,9 @@ app.post("/notification", async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-
+        
         // Create a new feedback document
-        const notification = new Feedback({
+        const notification = new Notification({
             text,
             User: userId
         });

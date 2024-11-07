@@ -20,27 +20,38 @@ app.get('/', (req, res) => {
 });
 
 
-// const verifyTokenWithExternalService = async (token) => {
-//     try {
-//         const response = await at('https://your-auth-service/verify-token', { token });
-//         return response.data; 
-//     } catch (error) {
-//         throw new Error('Token verification failed');
-//     }
-// };
+const verifyTokenWithExternalService = async (token) => {
+    try {
+        const tokenResponse = await fetch("http://localhost:3006/verify-token", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+              token
+          })
+      });
+        const res=tokenResponse.json();
+        console.log(res);
+        return res;
+    } catch (error) {
+        throw new Error('Token verification failed');
+    }
+};
 
 app.post('/createOrder', async (req, res) => {
 
   try {
     
-      // const token = req.header('Authorization')?.split(' ')[1];  
-      // const verificationResponse = await verifyTokenWithExternalService(token);
-      // if (!verificationResponse.isValid) {
-      //     return res.status(401).json({ message: "Token is not valid" });
-      // }
+      const token = req.header('Authorization')?.split(' ')[1];  
+      const verificationResponse = await verifyTokenWithExternalService(token);
+      if (!verificationResponse.isValid) {
+          return res.status(401).json({ message: "Token is not valid" });
+      }
 
+      const userId=verificationResponse.userId;
       // we will get this userid via jwt 
-      const { userId, productId, quantity } = req.body;
+      const { productId, quantity } = req.body;
 
       // Validate input
       if (!userId || !productId || !quantity) {

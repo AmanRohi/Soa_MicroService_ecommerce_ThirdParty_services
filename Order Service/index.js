@@ -21,7 +21,7 @@ const verifyTokenWithExternalService = async (token) => {
     }
 };
 
-app.post('/', async (req, res) => {
+app.post('/createOrder', async (req, res) => {
 
   try {
     
@@ -32,15 +32,11 @@ app.post('/', async (req, res) => {
       }
 
       const { customerName, productId, quantity } = req.body;
-
-
     
       // Validate input
       if (!customerName || !productId || !quantity) {
         return res.status(400).json({ message: 'Please provide customerName, productId, and quantity.' });
       }
-    
-      
       
       // Check the inventory Over here .. 
 
@@ -48,26 +44,25 @@ app.post('/', async (req, res) => {
 
       try {
           
-          const inventoryResponse = await axios.get(`https://api.example.com/inventory/${productId}`);
-          const stock = inventoryResponse.data.stock; 
-      
+          const inventoryResponse = await axios.get(`https://localhost:3005/inventory/${productId}`);
+          const productData=inventoryResponse.product;
+          const stock = productData.stock; 
         if(stock == 0) res.status(500).json({message : 'Empty Stock'});
 
+        const totalPrice=(productData.price*quantity);
       //    call payment service.
-      const paymentResponse = await axios.post('https://api.example.com/payment', {
-          customerName,
-          productId,
-          quantity,
-          price
-        });
+        const paymentResponse = await axios.post('https://localhost:3003/payment', {
+            userId,
+            price
+          });
     
         // Check if the payment was successful
         if (paymentResponse.data.status === 'success') {
           return res.status(200).json({
             message: 'Order placed successfully',
             order: {
-              customerName,
-              product: product.name,
+              userId,
+              product: productData.name,
               quantity,
               totalPrice
             }
@@ -81,8 +76,6 @@ app.post('/', async (req, res) => {
           console.error('Error checking inventory:', error);
           res.status(500).json({ message: 'An error occurred while checking inventory' });
         }
-    
-
   } catch (error) {
       res.status(400).json({ message: "Error verifying token", error: error.message });
   }

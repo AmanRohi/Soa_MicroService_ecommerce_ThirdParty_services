@@ -32,12 +32,12 @@ app.post("/payment", async (req, res) => {
 
         // Create a new feedback document
         const payment = new Payment({
-            text,
+            amount,
             User: userId
         });
 
         // Save the feedback to the database
-        await notification.save();
+        await payment.save();
         console.log("Payment made successfully !! ");
         
         // now send the notification to the user for making the payment !! 

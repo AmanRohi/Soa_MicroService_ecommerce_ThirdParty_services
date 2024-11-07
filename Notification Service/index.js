@@ -40,7 +40,7 @@ app.post("/notification", async (req, res) => {
         await notification.save();
         console.log("Notification Send Successfully by the service !! ");
         
-        res.status(201).json({ message: "Feedback saved successfully & Notification also send successfully !!", notification });
+        res.status(201).json({ message: "Notification Send Successfully !", notification });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error sending notification !!", error });
@@ -49,11 +49,11 @@ app.post("/notification", async (req, res) => {
 
 
 
+const PORT=3002;
 app.set("port", process.env.port || 3002)
 app.listen(app.get("port"), async() => {
   try{     
-    console.log(`Server Started on http://localhost:${app.get("port")}`)
-    console.log(process.env.MONGODB_URI);
+    console.log(`Notification service running on port ${PORT}`)
     await mongoose.connect(process.env.MONGODB_URI);
     console.log(`MongoDbConnected`);
     }

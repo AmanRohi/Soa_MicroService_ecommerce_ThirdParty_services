@@ -17,12 +17,39 @@ app.use(
     })
   )
 
+const verifyTokenWithExternalService = async (token) => {
+    try {
+        console.log("Invoking User Service !!");
+        const tokenResponse = await fetch("http://localhost:3006/verify-token", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+              token
+          })
+      });
+        const res=tokenResponse.json();
+        console.log(res);
+        return res;
+    } catch (error) {
+        throw new Error('Token verification failed');
+    }
+};
+
 const Feedback = require("./modal/Feedback");
 const User = require("./modal/User");
 // unique id of user , text , rating 
 app.post("/feedback", async (req, res) => {
     try {
-        const { rating, text, userId } = req.body;
+        const token = req.header('Authorization')?.split(' ')[1];  
+        const verificationResponse = await verifyTokenWithExternalService(token);
+        if (!verificationResponse.isValid) {
+            return res.status(401).json({ message: "Token is not valid" });
+        }
+
+        const userId=(verificationResponse.userId);
+        const { rating, text } = req.body;
 
         // Check if the user exists
         const user = await User.findById(userId);
@@ -69,11 +96,11 @@ app.post("/feedback", async (req, res) => {
 
 
 
+const PORT=3001;
 app.set("port", process.env.port || 3001)
 app.listen(app.get("port"), async() => {
   try{     
-    console.log(`Server Started on http://localhost:${app.get("port")}`)
-    console.log(process.env.MONGODB_URI);
+    console.log(`Feedback service running on port ${PORT}`)
     await mongoose.connect(process.env.MONGODB_URI);
     console.log(`MongoDbConnected`);
     }

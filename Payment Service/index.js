@@ -67,12 +67,11 @@ app.post("/payment", async (req, res) => {
 });
 
 
-
+const PORT=3003;
 app.set("port", process.env.port || 3003)
 app.listen(app.get("port"), async() => {
   try{     
-    console.log(`Server Started on http://localhost:${app.get("port")}`)
-    console.log(process.env.MONGODB_URI);
+    console.log(`Payment service running on port ${PORT}`)
     await mongoose.connect(process.env.MONGODB_URI);
     console.log(`MongoDbConnected`);
     }

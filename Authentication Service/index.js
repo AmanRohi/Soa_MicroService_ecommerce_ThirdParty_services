@@ -49,6 +49,8 @@ app.post('/signup', async (req, res) => {
 //   login route
 app.post('/login', async (req, res) => {
     try {
+      
+      console.log("Authentication Service Invoked !!");
       const { email, pwd } = req.body;
   
       const user = await User.findOne({ email });
@@ -71,7 +73,7 @@ app.post('/login', async (req, res) => {
 
 app.post('/verify-token', (req, res) => {
     const { token } = req.body;
-
+    console.log("Authorization Service Invoked !!");
     if (!token) {
         return res.status(400).json({ message: 'No token provided' });
     }

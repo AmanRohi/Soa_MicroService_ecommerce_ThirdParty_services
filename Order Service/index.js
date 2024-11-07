@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 
 const verifyTokenWithExternalService = async (token) => {
     try {
+        console.log("Invoking User Service !!");
         const tokenResponse = await fetch("http://localhost:3006/verify-token", {
           method: "POST",
           headers: {
@@ -70,6 +71,7 @@ app.post('/createOrder', async (req, res) => {
           },
       });
 
+        console.log("Invoking Inventory Service !!");
         const responseInventory = await inventoryResponse.json(); // Use .json() to parse the response body
         const productData = responseInventory.product;
         console.log(productData);
@@ -82,6 +84,8 @@ app.post('/createOrder', async (req, res) => {
 
         const totalPrice=( (productData.price) *quantity);
       //    call payment service.
+      
+          console.log("Invoking Payment Service!!");
           const paymentResponse = await fetch("http://localhost:3003/payment", {
             method: "POST",
             headers: {
@@ -92,10 +96,13 @@ app.post('/createOrder', async (req, res) => {
                 userId// replace with a valid user ID
             })
         });
+
           
         // Check if the payment was successful
         if (paymentResponse.ok) {
           // update the inventory 
+          
+          console.log("Invoking Inventory Service !!");
           const inventoryUpdateResponse = await fetch("http://localhost:3005/updateInventory", {
             method: "POST",
             headers: {
@@ -135,8 +142,7 @@ app.post('/createOrder', async (req, res) => {
 });
 
 
-    
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Order service running on port ${PORT}`)
 });

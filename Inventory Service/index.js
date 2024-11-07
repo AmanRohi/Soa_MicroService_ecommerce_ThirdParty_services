@@ -19,10 +19,11 @@ app.use(
 
 const Product = require("./modal/Product");
 // unique id of user , text , rating 
-app.get("/inventory", async (req, res) => {
+app.get("/inventory/:productId", async (req, res) => {
     try {
-        const productId = req.params;
-
+        
+        const productId = req.params.productId;
+        console.log(productId);
         // Check if the user exists
         const product = await Product.findById(productId);
         if (!product) {
@@ -30,6 +31,26 @@ app.get("/inventory", async (req, res) => {
         }
         
         res.status(201).json({ message: "Product Found successfully", product });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error finding Product !!", error });
+    }
+});
+
+app.post("/updateInventory", async (req, res) => {
+    try {
+        
+        const {quantity,productId} = req.body;
+        // Check if the user exists
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        
+        product.stock-=(quantity);
+        await product.save();
+        console.log("Product Stock Updated !!");
+        res.status(201).json({ message: "Product Stock Updated successfully", product });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error finding Product !!", error });

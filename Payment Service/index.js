@@ -23,7 +23,7 @@ const Payment = require('./modal/Payment');
 app.post("/payment", async (req, res) => {
     try {
         const { amount,userId } = req.body;
-
+        console.log(amount+" "+userId);
         // Check if the user exists
         const user = await User.findById(userId);
         if (!user) {
